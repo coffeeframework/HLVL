@@ -1,0 +1,27 @@
+model Example1
+
+variables:
+
+boolean A values: [selected, unselected]
+boolean B 
+integer C values: 1..20
+integer D values:[1, 2, 3, 60]
+integer E values: [10, 20, 30]
+boolean T 
+boolean X values: [selected, unselected]
+integer Y values: 1..50 
+instantiable [2,5] boolean Y1
+constraints:
+C1: A  is selected
+C2: C is 3
+C3: E is 20
+C4: vars: (D, E) variants [(1, 10) , (3, 20)]
+C5:  Y in 4..10
+C6: T is optional 
+C7: Y is mandatory
+C8: C1 --> C2
+C9: (Y is 4) --> C6
+C10: structural: A variants: B, T, X card: [0,2]
+
+
+

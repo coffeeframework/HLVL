@@ -1,0 +1,25 @@
+model MCS
+variables:
+boolean MCS
+boolean SpeedSensor
+instantiable [0,2] boolean PosSensor
+boolean Processor
+boolean Feedback
+boolean Visual
+boolean Audio
+boolean Vibration
+boolean Memory
+integer Cores values:0..7
+integer Size values: [0,1,2,4,8,16,32]
+
+constraints:
+C1: structural: MCS variants: [SpeedSensor, PosSensor, Processor, Memory, Feedback]
+c9: SpeedSensor is optional
+C10: PosSensor is optional
+C3: Processor is optional
+C4: Memory is optional
+C5: Feedback is optional
+c6: attributes: [Size] of Memory
+c7: attributes: [Cores] of Processor
+C11: structural: Feedback variants: [Visual,Audio,Vibration] card:[1,2]
+C12: vars: (Cores,Memory) variants [(1,2),(2,4), (3,8),(4,16), (5,32)]

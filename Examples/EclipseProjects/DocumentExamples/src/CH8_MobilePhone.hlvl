@@ -1,0 +1,19 @@
+model basicFeatureModel
+elements:
+	boolean mobilePhone
+	boolean calls
+	boolean gps
+	boolean screen
+	boolean media
+	boolean basic 
+	boolean highResolution
+	boolean mp3
+	boolean camera
+relations:
+	R1: coreElements(mobilePhone)
+	R2: decomposition(mobilePhone, [calls, screen])<1>
+	R3: decomposition(mobilePhone, [gps, media])<0>
+	R4: group(media, [mp3, camera])[0,1]
+	R5: group(screen, [basic, highResolution])[1,1]
+	R6: implies(camera, highResolution)
+	R7: mutex(gps, basic)

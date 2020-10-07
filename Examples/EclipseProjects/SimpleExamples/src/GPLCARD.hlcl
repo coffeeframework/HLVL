@@ -1,0 +1,57 @@
+model GPLCard
+variables:
+boolean GType
+boolean Weight
+boolean Search
+instantiable [1,2] boolean Algorithms
+boolean Directed
+boolean Undirected
+boolean Weighted
+boolean Unweighted
+boolean BFS
+boolean DFS
+boolean Kruskal
+boolean CycleCheck
+boolean StronglyCon
+boolean VertexNum
+boolean ConnComp
+instantiable [1,3] boolean SSP
+boolean Prim
+boolean MST
+constraints:
+//Hierarchical constraints
+c1: structural: GPLCard variants: [GType, Weight, Search, Algorithms]
+c2: GType is mandatory
+c3: Algorithms is mandatory
+c4: Weight is optional
+c5: Search is optional
+// Alternative
+c6: structural: GType variants: [Directed, Undirected] card: [1,1]
+c7: structural: Weight variants: [Weighted, Unweighted] card: [1,1]
+c8: structural: Search variants: [BFS, DFS] card: [1,1]
+// Or
+c9: structural: Algorithms variants: [CycleCheck, StronglyCon, VertexNum, ConnComp, SSP] card: [0,5] 
+C91: structural: Algorithms variants: [MST]
+C92: MST is mandatory  
+cNew: structural: MST variants: [Kruskal,  Prim] card: [0,2] 
+// Traversal constraints
+//requieres
+c10: CycleCheck requires DFS
+c11: StronglyCon requires Directed
+c12: StronglyCon requires DFS
+c13: VertexNum requires Search
+c14: ConnComp requires Undirected
+c15: Kruskal requires Undirected
+c16: Kruskal requires Weighted
+c17: Prim requires  Undirected
+c18: Prim requires Weighted
+c19: SSP requires Directed
+c20: SSP requires Weighted 
+//excludes
+c21: StronglyCon excludes ConnComp
+c22: StronglyCon excludes Kruskal
+c23: StronglyCon excludes Prim
+c24: SSP excludes ConnComp
+c25: SSP excludes Kruskal
+c26: SSP excludes Prim 
+

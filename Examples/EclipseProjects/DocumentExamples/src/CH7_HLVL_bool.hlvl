@@ -1,0 +1,40 @@
+model HLVL_bool
+elements:
+	boolean GPL variants: [true,false]
+	boolean Gtp 
+	boolean directed
+	boolean undirected
+	boolean Weight
+	boolean weighted
+	boolean unweighted
+	boolean Search
+	boolean BFS
+	boolean DFS
+	boolean Algorithms
+	boolean connected
+	boolean stronglyc
+	boolean cycle
+	boolean mstprim
+	boolean mstkruskal
+	boolean shortest
+relations:
+	R1: coreElements(GPL)
+	R2: decomposition(GPL,[Weight, Search])<0>
+	R3: decomposition(GPL, [Gtp, Algorithms])<1>
+	R3X: group(Gtp, [directed, undirected])[1,1]
+	R4: group(Weight, [weighted, unweighted])[1,1]
+	R5: group(Search, [BFS, DFS])[1,1]
+	R6: group(Algorithms, [connected, stronglyc, cycle, mstprim, mstkruskal, shortest])[1,6]
+	R7: implies(mstprim, unweighted)
+	R8: mutex(stronglyc, shortest)
+	R9: expression(undirected OR ~mstprim)
+	R10: expression(directed OR ~shortest)
+	R11: expression( ~mstprim OR ~mstkruskal )
+ 	R12: expression( unweighted OR ~mstkruskal )
+ 	R13: expression( undirected OR ~stronglyc )
+ 	R14: expression( ~connected OR ~stronglyc )
+ 	R15: expression( Search OR ~connected )
+ 	R16: expression( undirected OR ~mstkruskal )
+ 	R17: expression( ~mstkruskal OR ~shortest )
+ 	R18: expression( DFS OR ~cycle )
+ 	R19: expression( ~mstprim OR ~shortest)

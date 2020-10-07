@@ -1,0 +1,42 @@
+model mobilePhoneAttributes
+elements:
+  boolean mobilePhone
+  boolean hardware
+  boolean videoCall
+  att integer maxParConn variants: 2..8
+  boolean taskScheduler
+  boolean games
+  boolean connector3G
+  att integer speed variants: 2..14
+  boolean screen
+  att integer resolution variants: 1..4
+  boolean processors
+  boolean cpu
+  att integer speedCpu variants: 800..2400
+  boolean gpu
+  boolean ram
+  att integer size variants: 1..2048
+  boolean gps
+  boolean chess
+  boolean carRace
+  boolean tetris
+relations:
+ R0: coreElements(mobilePhone)
+ R1: decomposition(mobilePhone, [hardware])<1>
+ R2: decomposition(mobilePhone, [videoCall, taskScheduler, games])<0>
+ R2a: decomposition(videoCall, [maxParConn])<1>
+ R3: decomposition(hardware, [screen, processors, ram])<1>
+ R3a: decomposition(screen, [resolution])<1>
+ R3b: decomposition(ram, [size])<1>
+ R4: decomposition(hardware, [connector3G, gps])<0>
+ R4a: decomposition(connector3G, [speed])<1>
+ R5: group(games, [chess, carRace, tetris])[0,6]
+ R6: decomposition(processors, [gpu])<0>
+ R7: instantiable cpu [1,2]
+ 
+ //complex constraints
+ c1: expression(instances(cpu) = 2 => taskScheduler=1)
+ C2a:  expression((screen.resolution = 3) AND (connector3G.speed >= 6))
+ C2: visibility(call.mpc = 4, [C2a])
+ C3: implies(carRace, expression((gpu =1 AND ram.size= 512) OR (ram.size= 1024)))
+ 

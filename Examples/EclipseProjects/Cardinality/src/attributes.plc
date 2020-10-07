@@ -1,0 +1,16 @@
+model attributes_HLVL
+variables:
+boolean MCS
+//instantiable [1,2] boolean Memory
+//instantiable [1,2] boolean Processor
+boolean Memory
+boolean Processor
+integer Cores values:0..7
+integer Size values: 0..32
+constraints:
+C1: structural: MCS variants: [Processor]
+C2: Processor is optional
+C3: structural: Processor variants: [Memory]
+C4: Memory is optional
+c6: attributes: [Size] of Memory
+c7: attributes: [Cores] of Processor

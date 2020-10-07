@@ -1,0 +1,74 @@
+model cardinality_HLCL
+variables:
+//variables
+boolean MCS
+//boolean SpeedSensor
+//boolean PositionSensor
+boolean Processor
+boolean Memory
+//attributes
+//integer Size domain: [32, 64, 256, 512]
+// instances
+//boolean PositionSensor1
+//boolean PositionSensor2
+//boolean PositionSensor3
+//boolean PositionSensor4
+// instances processor
+boolean Processor1
+boolean Processor2
+// instances memory
+boolean Memory1
+boolean Memory2
+
+//parent-child instances
+boolean Processor1_Mem1
+boolean Processor1_Mem2
+boolean Processor2_Mem1
+boolean Processor2_Mem2
+constraints:
+// Constraints generated from the declaration of each feature: Instances of processor
+c0: MCS = 1
+c1: Processor => Processor1 >= 0
+c2: Processor1 => Processor
+c3: Processor => Processor2 >= 0
+c4: Processor2 => Processor
+c5: 1 <= Processor1 + Processor2
+c6: Processor1 + Processor2 <= 2
+//// Constraints generated from the declaration of each feature: Instances of Memory
+c7: Memory => Memory1 >= 0
+c8: Memory1 => Memory
+c9: Memory => Memory2 >= 0
+c10: Memory2 => Memory
+c11: 1<= Memory1+ Memory2
+c12: Memory1 + Memory2 <= 2
+// Attribute
+//c13: Memory <=> Size > 0
+
+// Parent-Child (mandatory- optional)
+c14: MCS = Processor
+//c15: MCS = SpeedSensor
+C16: Processor = Memory
+
+// Parent-Child between two instantiable features
+
+//c17: Processor1 => (Processor1_Mem1 => Memory)
+//c18: Processor1 => (Processor1_Mem2 => Memory)
+//c19: Memory => ((1<= Processor1_Mem1 + Processor1_Mem2) AND (Processor1_Mem1 + Processor1_Mem2 <= 2))
+
+//nuevas Angie:
+
+// if Parent_i is selected then (min<= (Sumatoria (Parent_i_children_j)) <= max)
+C17: Processor1 =>((1 <= Processor1_Mem1 + Processor1_Mem2) AND (Processor1_Mem1 + Processor1_Mem2<=2))
+C18:  (Memory1 AND Processor1) <=> Processor1_Mem1
+C19:  (Memory2 AND Processor1) <=> Processor1_Mem2
+
+
+// c20: Processor2 => (Processor2_Mem1 => Memory)
+// c21: Processor2 => (Processor2_Mem2 => Memory)
+// c22: Memory => (1<= Processor2_Mem1 + Processor2_Mem2) AND (Processor2_Mem1 + Processor2_Mem2 <= 2)
+
+//nuevas Angie:
+
+C20: Processor2 =>(1 <= Processor2_Mem1 + Processor2_Mem2) AND (Processor2_Mem1 + Processor2_Mem2<=2)
+C21: Processor2_Mem1 <=> (Memory1 AND Processor2)
+C22: Processor2_Mem2 <=> (Memory2 AND Processor2)

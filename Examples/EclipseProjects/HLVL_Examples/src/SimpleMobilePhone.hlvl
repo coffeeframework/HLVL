@@ -1,0 +1,15 @@
+model mobilePhone
+elements:
+  boolean calls
+  boolean GPS
+  boolean screen
+  boolean basicScreen
+  boolean hrScreen
+  boolean camera
+  //instantiable [1,3] boolean camera
+relations:
+ R0: common(calls, screen)
+ R1: group(screen, [basicScreen, hrScreen],[1,1])
+ R2: mutex(GPS, basicScreen)
+ R3: implies(camera, hrScreen)
+ 

@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Automatic-Module-Name: com.coffee.hlvl.ide
+Bundle-SymbolicName: com.coffee.hlvl.ide; singleton:=true
+Export-Package: com.coffee.ide.contentassist.antlr,com.coffee.ide.cont
+ entassist.antlr.internal
+Bundle-Name: com.coffee.hlvl.ide
+Bundle-Version: 1.0.0.201907261948
+Require-Bundle: com.coffee.hlvl,org.eclipse.xtext.ide,org.eclipse.xtex
+ t.xbase.ide,org.antlr.runtime;bundle-version="[3.2.0,3.2.1)"
+Bundle-ManifestVersion: 2
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-Vendor: My Company
+

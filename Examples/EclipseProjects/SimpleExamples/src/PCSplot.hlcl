@@ -1,0 +1,26 @@
+model PC3
+variables:
+boolean Mainboard values:[selected, unselected]
+boolean Socket_1151 values:[selected, unselected]
+boolean Socket_AM4 variants:[selected, unselected]
+boolean RAM variants:[selected, unselected]
+boolean Power_Supply_Unit variants:[selected, unselected]
+boolean Optical_Drive variants:[selected, unselected]
+boolean CPU_Cooler variants:[selected, unselected]
+boolean Socket_1151_compatible variants:[selected, unselected]
+boolean Socket_AM4_compatible variants:[selected ,unselected]
+instantiable [0,4] boolean Screen  variants:[selected ,unselected]
+
+constraints:
+CS1: structural: PC3 variants: Mainboard, Optical_Drive, CPU_Cooler, Power_Supply_Unit
+C4: Power_Supply_Unit is mandatory
+C6: CPU_Cooler is mandatory
+C5: Optical_Drive is optional
+C1: Mainboard is mandatory
+CS2:structural: Mainboard variants: RAM
+C3: RAM is mandatory
+C2: structural:Mainboard variants:Socket_1151, Socket_AM4  card:[1,1]
+C8: Socket_AM4 requires Socket_AM4_compatible
+C9: Socket_1151 requires Socket_1151_compatible
+C7: structural:CPU_Cooler variants:Socket_1151_compatible, Socket_AM4_compatible  card:[1,3]
+

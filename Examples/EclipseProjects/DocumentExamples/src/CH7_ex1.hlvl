@@ -1,0 +1,23 @@
+model MCS_CH7
+elements:
+	integer cores variants: 1..7
+	integer size variants: [2, 8, 16, 32]
+	boolean processor variants: [true, false]
+	boolean feedback
+	boolean memory
+	boolean visual
+	boolean audio
+	boolean vibration
+	boolean sensors
+	boolean positionSensor
+	boolean speedSensor
+relations:
+	r1: coreElements(processor, sensors, memory)
+	r2: decomposition(sensors,[positionSensor, speedSensor])<0>
+	r3: decomposition(processor, [cores])<1>
+	r4: decomposition(memory, [size])<1>
+	r5:	instantiable positionSensor [0,2]
+	r6: instantiable speedSensor [0,2]
+	r7: implies(processor, memory)
+	r8: mutex(vibration, speedSensor)
+	r9: group(feedback, [audio, vibration, visual])[2,3]

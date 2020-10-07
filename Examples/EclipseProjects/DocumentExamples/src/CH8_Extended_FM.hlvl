@@ -1,0 +1,20 @@
+
+model Extended_FM
+elements:
+  boolean connectivity
+  boolean bluetooth
+  boolean wifi
+  boolean usb
+  att integer memory variants: [2, 4, 6, 8]
+  att integer cost is 50
+  att integer maxSpeed variants: 100..700
+relations:
+  R1: coreElements(connectivity)
+  R2: group(connectivity, [bluetooth, usb, wifi])[0,3]
+  R3: decomposition(bluetooth, [memory, cost, maxSpeed])<1>
+  R4: decomposition(usb, [memory, cost, maxSpeed])<1>
+  R5: decomposition(wifi, [memory, cost, maxSpeed])<1>
+  R6: expression(usb.memory * usb.maxSpeed = usb.cost)
+  R7: expression(wifi.memory * wifi.maxSpeed = wifi.cost)
+  R8: expression(bluetooth.memory * bluetooth.maxSpeed = bluetooth.cost)
+	

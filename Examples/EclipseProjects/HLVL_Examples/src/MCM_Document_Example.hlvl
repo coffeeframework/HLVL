@@ -1,0 +1,41 @@
+model PAS
+elements:
+	boolean PAS
+	boolean memory
+	boolean processor
+	boolean sensors
+	boolean feedback
+	
+	boolean positionSensor
+	boolean speedSensor
+	
+	boolean visual
+	boolean audio
+	boolean vibration
+	// attributes
+	att integer cores variants: 0..7
+	att integer size variants: [0, 2, 8, 16, 32]
+
+relations:
+
+	c1: common(PAS)
+	
+	// structure
+	d1: decomposition(PAS, [processor, sensors, memory], [1,1])
+	d2: decomposition(PAS, [feedback],[0,1])
+	// Feedback can be visual, audio or vibration and a single product can have at most two kinds of feedbacks
+	d3: group(feedback, [audio, vibration, visual],[0,2])
+	
+	// may contain one speed sensor
+	s1: decomposition(sensors,[speedSensor],[0,1])
+	// may contain zero to two position sensors
+	s2: decomposition(sensors,[positionSensor],[0,2])
+	
+	//attributes
+	r3: decomposition(processor, [cores], [1,1])
+	r4: decomposition(memory, [size], [1,1])
+
+	//r7: implies(processor, memory)
+	//r8: mutex(vibration, speedSensor)
+	
+	

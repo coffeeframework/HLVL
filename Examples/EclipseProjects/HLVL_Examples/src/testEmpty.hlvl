@@ -1,0 +1,10 @@
+model eShop
+elements:
+	boolean connectionType
+	symbolic customerType variants: ['sporadic' , 'regular'] comment: {"What is the customer type?"}
+	//instantiable [1,5] boolean  appServer
+	//instantiable [2,10] boolean serverMachines
+	att integer confidentiality variants: 1..5
+	att integer confidentialityBounded is 2
+	integer notAtt variants:[2, 4, 8]  
+relations:

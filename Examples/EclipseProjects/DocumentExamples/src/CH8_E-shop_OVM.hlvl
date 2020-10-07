@@ -1,0 +1,31 @@
+model E_shop
+elements:
+	boolean customerType
+	boolean current
+	boolean regular
+	boolean customerProfile
+	boolean purchaseHistory
+	boolean client
+	boolean payment
+	boolean payPal
+	boolean sms
+	boolean card
+	boolean cardType
+	boolean debit
+	boolean credit
+	boolean connection
+	boolean secure
+	boolean unsecure
+relations:
+	R1: coreElements(customerType, payment, connection)
+	R2: decomposition(customerType, [current])<1>
+	R3: decomposition(customerType, [regular])<0>
+	R4: decomposition(connection, [secure, unsecure])<0>
+	R5: decomposition(customerProfile, [purchaseHistory])<0>
+	R6: decomposition(customerProfile, [client])<1>
+	R7: decomposition(cardType, [debit])<0>
+	R8: decomposition(cardType, [credit])<0>
+	R9: group(payment, [payPal, sms, card])[0,3]
+	R10: implies(regular, [customerProfile, secure, cardType])
+	R11: mutex(current, payPal)
+	

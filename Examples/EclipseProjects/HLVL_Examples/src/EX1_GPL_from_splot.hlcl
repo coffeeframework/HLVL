@@ -1,0 +1,45 @@
+model SatExample_GPL_from_splot
+variables:
+boolean Gpl
+boolean Weight
+boolean weighted
+boolean unweighted
+boolean Gtp
+boolean directed
+boolean undirected
+boolean Search
+boolean DFS
+boolean BFS
+boolean Algorithms
+boolean connected
+boolean stronglyc
+boolean cycle
+boolean mstprim
+boolean mstkruskal
+boolean shortest
+constraints:
+c0: Gpl = 1
+c2: Gpl <=> Algorithms
+c4: Gpl <=> Gtp
+C3: Weight => Gpl
+c5: Search => Gpl
+c6: ~(stronglyc AND shortest)
+c7: ~(mstprim AND mstkruskal)
+c8: ~(connected AND stronglyc)
+c9: ~(mstkruskal AND shortest)
+c10: ~(mstprim AND shortest)
+c11: mstprim => unweighted
+c12: mstprim => undirected
+c13: shortest => directed
+c14: mstkruskal => unweighted
+c15: stronglyc => undirected
+c16: connected => Search
+c17: mstkruskal => undirected
+c18: cycle => DFS
+c19: (directed <=> (~undirected AND  Gtp)) AND
+(undirected <=> (~directed AND  Gtp)) 
+c20: Algorithms <=> (connected OR stronglyc OR cycle OR mstprim OR mstkruskal OR shortest )
+c21: (weighted <=> (~unweighted AND  Weight)) AND
+(unweighted <=> (~weighted AND  Weight)) 
+c22: (BFS <=> (~DFS AND  Search)) AND
+(DFS <=> (~BFS AND  Search))

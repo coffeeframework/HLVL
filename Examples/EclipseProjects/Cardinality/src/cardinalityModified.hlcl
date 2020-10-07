@@ -1,0 +1,90 @@
+model cardinality_Paper_HLCL
+variables:
+//variables from features
+boolean A
+boolean B
+//boolean C
+boolean D
+boolean E
+
+//Variables from instances
+boolean A1
+integer A_card domain:0..1
+
+//For B
+boolean A1_B1
+boolean A1_B2
+integer B_card domain: 0..2 // calculated as the cardinality of the parent * max cardinality
+
+//boolean A1_B1_C1
+//boolean A1_B2_C1
+//integer C_card domain: 0..2
+
+boolean A1_B1_D1
+boolean A1_B1_D2
+boolean A1_B2_D1
+boolean A1_B2_D2
+integer D_card domain: 0..4
+
+boolean A1_B1_D1_E1
+boolean A1_B1_D1_E2
+boolean A1_B1_D2_E1
+boolean A1_B1_D2_E2
+boolean A1_B2_D1_E1
+boolean A1_B2_D1_E2
+boolean A1_B2_D2_E1
+boolean A1_B2_D2_E2
+integer E_card domain: 0..8
+constraints:
+// Constraints from root generated from the declaration of each feature: Instances of processor
+c0: A = 1
+
+// Parent-child (mandatory-optional)
+
+c1: A=B
+//c2: B=C
+c3: B=D
+c4: D=E
+
+// For A instances constraints
+c5: A_card = A1
+c6: 1<= A1
+c7: A1<= 1
+c8: A <=> A_card > 0
+
+// For B
+c9: B_card = A1_B1+ A1_B2
+c10: 1<= A1_B1+ A1_B2
+c11: A1_B1+ A1_B2 <=2
+c12: B <=> B_card >0
+
+
+// For C
+//c13: C_card = A1_B1_C1 + A1_B2_C1
+//c14: 1<= A1_B1_C1 + A1_B2_C1
+//c15: A1_B1_C1 + A1_B2_C1 <= 2
+//c16: C <=> C_card >0
+
+
+// For D
+c17: D_card = A1_B1_D1 + A1_B1_D2+ A1_B2_D1 + A1_B2_D2
+c18: 1 <= A1_B1_D1 + A1_B1_D2+ A1_B2_D1 + A1_B2_D2
+c19: A1_B1_D1 + A1_B1_D2+ A1_B2_D1 + A1_B2_D2 <= 4
+c20: D <=> D_card > 0
+
+// cardinality of instances
+c20_1: A1_B1 <=> ((1 <= A1_B1_D1 + A1_B1_D2) AND  (A1_B1_D1 + A1_B1_D2<=2))
+c20_2: A1_B2 <=> ((1 <= A1_B2_D1 + A1_B2_D2) AND (A1_B2_D1 + A1_B2_D2 <= 2))
+
+// For E
+c21:E_card = A1_B1_D1_E1 + A1_B1_D1_E2 + A1_B1_D2_E1 + A1_B1_D2_E2+ A1_B2_D1_E1+ A1_B2_D1_E2+ A1_B2_D2_E1+ A1_B2_D2_E2
+c22: 1<= A1_B1_D1_E1 + A1_B1_D1_E2 + A1_B1_D2_E1 + A1_B1_D2_E2+ A1_B2_D1_E1+ A1_B2_D1_E2+ A1_B2_D2_E1+ A1_B2_D2_E2
+c23: A1_B1_D1_E1 + A1_B1_D1_E2 + A1_B1_D2_E1 + A1_B1_D2_E2+ A1_B2_D1_E1+ A1_B2_D1_E2+ A1_B2_D2_E1+ A1_B2_D2_E2 <= 8
+c24: E <=> E_card > 0
+
+c25: A1_B1_D1 <=> ((1<= A1_B1_D1_E1 + A1_B1_D1_E2) AND (A1_B1_D1_E1 + A1_B1_D1_E2 <= 2))
+c26: A1_B1_D2 <=> ((1 <= A1_B1_D2_E1 + A1_B1_D2_E2 ) AND (A1_B1_D2_E1 + A1_B1_D2_E2 <= 2 ))
+c27: A1_B2_D1 <=> ((1<= A1_B2_D1_E1 + A1_B2_D1_E2 ) AND (A1_B2_D1_E1 + A1_B2_D1_E2 <=2))
+c28: A1_B2_D2 <=> ((1<= A1_B2_D2_E1 + A1_B2_D2_E2 ) AND (A1_B2_D2_E1 + A1_B2_D2_E2 <=2))
+
+

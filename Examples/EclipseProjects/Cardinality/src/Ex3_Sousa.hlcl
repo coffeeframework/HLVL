@@ -1,0 +1,55 @@
+model Ex3_Sousa
+variables:
+boolean A
+boolean B
+integer B_card domain:1..2
+boolean A_B1
+boolean A_B2
+boolean D
+integer D_card domain:1..4
+boolean A_B1_D1
+boolean A_B1_D2
+boolean A_B2_D1
+boolean A_B2_D2
+boolean E
+integer E_card domain:1..8
+boolean A_B1_D1_E1
+boolean A_B1_D1_E2
+boolean A_B1_D2_E1
+boolean A_B1_D2_E2
+boolean A_B2_D1_E1
+boolean A_B2_D1_E2
+boolean A_B2_D2_E1
+boolean A_B2_D2_E2
+constraints:
+c0: A = 1
+ac_0: B_card =  A_B1 + A_B2  
+ac_1: 1<=  A_B1 + A_B2  
+ac_2: 2 >=  A_B1 + A_B2  
+ac_3: B <=> B_card >0
+ac_4: A_B1 <=> 
+		((1 <=  A_B1_D1 + A_B1_D2 ) AND
+		(2 >=  A_B1_D1 + A_B1_D2 ))
+ac_5: A_B2 <=> 
+		((1 <=  A_B2_D1 + A_B2_D2 ) AND
+		(2 >=  A_B2_D1 + A_B2_D2 ))
+ac_6: D_card =  A_B1_D1 + A_B1_D2  + A_B2_D1 + A_B2_D2  
+ac_7: 1<=  A_B1_D1 + A_B1_D2  + A_B2_D1 + A_B2_D2  
+ac_8: 4 >=  A_B1_D1 + A_B1_D2  + A_B2_D1 + A_B2_D2  
+ac_9: D <=> D_card >0
+ac_10: A_B1_D1 <=> 
+		((1 <=  A_B1_D1_E1 + A_B1_D1_E2 ) AND
+		(2 >=  A_B1_D1_E1 + A_B1_D1_E2 ))
+ac_11: A_B1_D2 <=> 
+		((1 <=  A_B1_D2_E1 + A_B1_D2_E2 ) AND
+		(2 >=  A_B1_D2_E1 + A_B1_D2_E2 ))
+ac_12: A_B2_D1 <=> 
+		((1 <=  A_B2_D1_E1 + A_B2_D1_E2 ) AND
+		(2 >=  A_B2_D1_E1 + A_B2_D1_E2 ))
+ac_13: A_B2_D2 <=> 
+		((1 <=  A_B2_D2_E1 + A_B2_D2_E2 ) AND
+		(2 >=  A_B2_D2_E1 + A_B2_D2_E2 ))
+ac_14: E_card =  A_B1_D1_E1 + A_B1_D1_E2  + A_B1_D2_E1 + A_B1_D2_E2  + A_B2_D1_E1 + A_B2_D1_E2  + A_B2_D2_E1 + A_B2_D2_E2  
+ac_15: 1<=  A_B1_D1_E1 + A_B1_D1_E2  + A_B1_D2_E1 + A_B1_D2_E2  + A_B2_D1_E1 + A_B2_D1_E2  + A_B2_D2_E1 + A_B2_D2_E2  
+ac_16: 8 >=  A_B1_D1_E1 + A_B1_D1_E2  + A_B1_D2_E1 + A_B1_D2_E2  + A_B2_D1_E1 + A_B2_D1_E2  + A_B2_D2_E1 + A_B2_D2_E2  
+ac_17: E <=> E_card >0

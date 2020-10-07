@@ -1,0 +1,48 @@
+\begin{thebibliography}{1}
+
+\bibitem{benavides2005automated}
+David Benavides, Pablo Trinidad, and Antonio Ruiz-Cort{\'e}s.
+\newblock Automated reasoning on feature models.
+\newblock In {\em Proceedings of the 17th International Conference on Advanced
+  Information Systems Engineering}, CAiSE'05, pages 491--503, Berlin,
+  Heidelberg, 2005. Springer-Verlag.
+
+\bibitem{czarnecki2005cardinality}
+Krzysztof Czarnecki and Chang Hwan~Peter Kim.
+\newblock {Cardinality-based feature modeling and constraints: A progress
+  report}.
+\newblock In {\em International Workshop on Software Factories}, pages 16--20,
+  2005.
+
+\bibitem{gemino2004framework}
+Andrew Gemino and Yair Wand.
+\newblock A framework for empirical evaluation of conceptual modeling
+  techniques.
+\newblock {\em Requirements Engineering}, 9(4):248--260, Nov 2004.
+
+\bibitem{kang1990feature}
+Kyo~C Kang, Sholom~G Cohen, James~a Hess, William~E Novak, and a~Spencer
+  Peterson.
+\newblock {Feature-Oriented Domain Analysis (FODA) Feasibility Study}.
+\newblock Technical Report November, DTIC Document, 1990.
+
+\bibitem{kang1998form}
+Kyo~C. Kang, Sajoong Kim, Jaejoon Lee, Kijoo Kim, Euiseob Shin, and Moonhang
+  Huh.
+\newblock Form: A feature-oriented reuse method with domain-specific reference
+  architectures.
+\newblock {\em Ann. Softw. Eng.}, 5(1):143--168, January 1998.
+
+\bibitem{mazothesis}
+Raul Mazo.
+\newblock Product line models a generic approach for automated verification of
+  product line models, 2012.
+
+\bibitem{michel2011formal}
+Raphael Michel, Andreas Classen, Arnaud Hubaux, and Quentin Boucher.
+\newblock A formal semantics for feature cardinalities in feature diagrams.
+\newblock In {\em Proceedings of the 5th Workshop on Variability Modeling of
+  Software-Intensive Systems}, VaMoS '11, pages 82--89, New York, NY, USA,
+  2011. ACM.
+
+\end{thebibliography}

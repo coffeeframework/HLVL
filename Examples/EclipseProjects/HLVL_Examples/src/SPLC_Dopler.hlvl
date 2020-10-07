@@ -1,0 +1,22 @@
+model Dopler
+elements:
+	symbolic scope variants: ['assemble yourself', 'complete suite']
+					comment: {"What to buy?"}
+	boolean glossary comment:{"Include glossary?"}
+	symbolic resolution variants:['800x600', '']
+						comment:{"Default resolution?"}
+	integer width comment:{"Width?"}
+	boolean tools
+	boolean configurationWizard
+	boolean decisionKing
+	boolean projectKing
+relations:
+    c1: common(tools)
+
+	g1: group(tools, [configurationWizard, decisionKing, projectKing], [1,3])
+	val1: expression(width >= 800 AND width <= 1680)
+	e1: expression(resolution='800x600' => width = 800)   
+	vis1: visibility(configurationWizard=true, [resolution])
+	vis2: visibility(entailed(scope), [glossary])
+	vis3: visibility(scope='assemble yourself', [glossary])
+	

@@ -1,0 +1,9 @@
+model eShop
+elements:
+	boolean products variants: [true, false]
+	boolean advertising 
+	boolean internalAdvertising
+	boolean externalAdvertising
+	att integer discount variants: 5..70
+	att integer frames variants: [1, 2, 3, 4]
+relations:
