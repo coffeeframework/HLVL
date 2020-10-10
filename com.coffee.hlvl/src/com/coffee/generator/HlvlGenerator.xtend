@@ -3,17 +3,11 @@
  */
 package com.coffee.generator
 
+import com.coffee.hlvl.Model
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.AbstractGenerator
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGeneratorContext
-import com.coffee.hlvl.Model
-
-import com.coffee.hlvl.Group
-import com.coffee.hlvl.Decomposition
-import com.coffee.hlvl.ElmDeclaration
-
-//import java.util.Properties
 
 /**
  * Generates code from your model files on save.
@@ -32,44 +26,40 @@ class HlvlGenerator extends AbstractGenerator {
 	/**
 	 * instantiable is a flag for determine if the variability model has multiplicities
 	 */
-	private boolean instantiable =false;
+	private boolean instantiable = false;
 	/**
 	 * attributes is a flag for determine if the variability model has attributes 
 	 */
-	private boolean attributes= false;
-	
+	private boolean attributes = false;
+
 	/**generator is an instance of IGenerator
 	 * */
 	private IHLVLParser parser;
-	
 
 	override void doGenerate(Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context) {
 		// obtaining the name of the model from the source code
-		val modelName= modelName(resource.contents.head as Model)
+		val modelName = modelName(resource.contents.head as Model)
 		// obtaining the model
-		val model= resource.contents.head as Model
-		
-		//obtaining the type of problem
-		val dialect= findDialect(model)
-		
+		val model = resource.contents.head as Model
+
+		// obtaining the type of problem
+		val dialect = Dialect.findDialect(model)
+
 		val long startTime = System.currentTimeMillis();
-		
 
 		// Determining the type of the problem to produce the solver compatible 
-		parser= ParserFactory.getParser(dialect, modelName );
-		
-		//generating an intermediate file with the MiniZinc code representation
-		fsa.generateFile(modelName+".mzn", parser.parseModel(model));
-		
+		parser = ParserFactory.getParser(dialect, modelName);
+				
+		// generating an intermediate file with the MiniZinc code representation
+		fsa.generateFile(modelName + ".mzn", parser.parseModel(model));
+
 		// These lines avoid the call to the methods creating the Json file
-		
 		val long stopTime = System.currentTimeMillis();
 		val long elapsedTime = stopTime - startTime;
-		fsa.generateFile(modelName+"_Operations.json", parser.getOperations(elapsedTime))
-    
-        //System.out.println("time of the transformation "+ elapsedTime +"ms");
+		fsa.generateFile(modelName + "_Operations.json", parser.getOperations(elapsedTime))
+
+	// System.out.println("time of the transformation "+ elapsedTime +"ms");
 	}
-	
 
 	/**
 	 * Method to obtain the name of the model
@@ -80,109 +70,126 @@ class HlvlGenerator extends AbstractGenerator {
 		var name = model.name.toFirstUpper
 		return name
 	}
-	
-		/**
+
+	/**
 	 * Method that determines the dialect used to specify the model
 	 * using the  
 	 * @param model is an abstract representation of the model
 	 */
-	public def Dialect findDialect(Model model){
-		/*
-		 * A problem is BASIC iff it doesn't have multiplicity or [n,m] groups and:
-		 * 1. All elements of type boolean
-		 * 3. decompositions with cardinality: [0, 1], [1,1]
-		 * 4. groups with cardinality: [1, 1], [1,*]
-		 * 5. boolean expressions
-		 * 
-		 * A problem is of type Multiplicity iff
-		 * 1. decompositions with cardinality [n,m]
-		 * 
-		 * else it is an ATTIRBUTE
-		 */
-		//FIXME arreglar lo de los atributos
-		
-		val allElementsBooleanNotAttributes = allElementsBoolean(model)
-		val basicRelationsNotMultiplicity= booleanRelations(model)
-		
-		if ( allElementsBooleanNotAttributes
-			&& basicRelationsNotMultiplicity){
-			return Dialect.BASIC_BOOL
-		}else if(existInstantiable()){
-			return Dialect.MULTIPLICITY
-		}else{ 
-			return Dialect.ATTRIBUTE
-		}
-	}
-		/**
-	 * Method to determine the type of the variables 
-	 * If there are one variable that cannot be mapped into a boolean
-	 * variable, then the method returns CSP. 
-	 * @param model
-	 * @return true if all elements are booleans
-	 */
-	def allElementsBoolean(Model model){
-		var isBoolean= true
-		for ( element : model.elements ){
-			attributes = (element.att=== null)
-			if (element.dataType=="integer" || element.dataType=="symbolic" || element.att!== null){
-				isBoolean= false
-				return isBoolean
-			}
-		}
-		return isBoolean
-	}
-	
-		
-	/**
-	 * Method to determine the type of the constraints 
-	 * If there are one constraint that cannot be mapped into a boolean
-	 * constraint, then the method returns false. 
-	 * @param model
-	 * @return true if all constraints can be mapped to boolean
-	 */
-	def booleanRelations(Model model){
-		var allBoolean =true
-
-		for (rel: model.relations ){
-			// if a relation is of type multi-instantions, 
-			// the problem cannot be boolean
-			//FIXME  
-			if (rel.exp instanceof Decomposition){
-				val min = (rel.exp as Decomposition).min
-				val max = (rel.exp as Decomposition).max
-				
-				if ( !(min==1 && max == 1) &&  //[1,1] 
-					!(min==0 && max == 1) ) //&& //[0..1]
-					{
-						instantiable =true
-						return false
-					}
-					
-			} else if(rel.exp instanceof Group){
-				
-				val min = (rel.exp as Group).min
-				val numChildren= (rel.exp as Group).getChildren.values.size
-				var int max
-				if ((rel.exp as Group).max.value == "*"){
-					max=numChildren
-				}
-				else{
-					max=  Integer.parseInt(
-					(rel.exp as Group).max.value)
-				}
-				
-				if ( !(min==1 && max == 1) &&  //[1,1] 
-					!(min==1 && (max==numChildren)) //&& //[1,n] , [1,*]
-					) {
-					return false
-				}
-			}
-		}
-		// if the loop is finished, then the model has all boolean relations
-		return allBoolean
-	}
-		def existInstantiable(){
-		return instantiable
-	}
+//	public def Dialect findDialect(Model model) {
+//		/*
+//		 * A problem is BASIC iff it doesn't have multiplicity or [n,m] groups and:
+//		 * 1. All elements of type boolean
+//		 * 3. decompositions with cardinality: [0, 1], [1,1]
+//		 * 4. groups with cardinality: [1, 1], [1,*]
+//		 * 5. boolean expressions
+//		 * 
+//		 * A problem is of type Multiplicity iff
+//		 * 1. decompositions with cardinality [n,m]
+//		 * 
+//		 * A problem is HLVL-EXTENDED when mecanisms for scalability are specified:
+//		 * 1. extended models for inheritence
+//		 * 
+//		 * else it is an ATTIRBUTE
+//		 */
+//		// FIXME arreglar lo de los atributos
+//		val allElementsBooleanNotAttributes = allElementsBoolean(model)
+//		val basicRelationsNotMultiplicity = booleanRelations(model)
+//
+//		if (allElementsBooleanNotAttributes && basicRelationsNotMultiplicity) {
+//			return Dialect.BASIC_BOOL
+//		} else if (existInstantiable()) {
+//			return Dialect.MULTIPLICITY
+//		} else if (hasScalabilityMecanism(model)) { // HLVL-E
+//			return Dialect.HLVL_EXTENDED
+//		} else {
+//			return Dialect.ATTRIBUTE
+//		}
+//	}
+//
+//	/**
+//	 * Method to determine the type of the variables 
+//	 * If there are one variable that cannot be mapped into a boolean
+//	 * variable, then the method returns CSP. 
+//	 * @param model
+//	 * @return true if all elements are booleans
+//	 */
+//	def allElementsBoolean(Model model) {
+//		var isBoolean = true
+//		for (element : model.elements) {
+//			attributes = (element.att === null)
+//			if (element.dataType == "integer" || element.dataType == "symbolic" || element.att !== null) {
+//				isBoolean = false
+//				return isBoolean
+//			}
+//		}
+//		return isBoolean
+//	}
+//
+//	/**
+//	 * Method to determine the type of the constraints 
+//	 * If there are one constraint that cannot be mapped into a boolean
+//	 * constraint, then the method returns false. 
+//	 * @param model
+//	 * @return true if all constraints can be mapped to boolean
+//	 */
+//	def booleanRelations(Model model) {
+//		var allBoolean = true
+//
+//		for (rel : model.relations) {
+//			// if a relation is of type multi-instantions, 
+//			// the problem cannot be boolean
+//			// FIXME  
+//			if (rel.exp instanceof Decomposition) {
+//				val min = (rel.exp as Decomposition).min
+//				val max = (rel.exp as Decomposition).max
+//
+//				if (!(min == 1 && max == 1) && // [1,1] 
+//				!(min == 0 && max == 1)) // && //[0..1]
+//				{
+//					instantiable = true
+//					return false
+//				}
+//
+//			} else if (rel.exp instanceof Group) {
+//
+//				val min = (rel.exp as Group).min
+//				val numChildren = (rel.exp as Group).getChildren.values.size
+//				var int max
+//				if ((rel.exp as Group).max.value == "*") {
+//					max = numChildren
+//				} else {
+//					max = Integer.parseInt((rel.exp as Group).max.value)
+//				}
+//
+//				if (!(min == 1 && max == 1) && // [1,1] 
+//				!(min == 1 && (max == numChildren)) // && //[1,n] , [1,*]
+//				) {
+//					return false
+//				}
+//			}
+//		}
+//		// if the loop is finished, then the model has all boolean relations
+//		return allBoolean
+//	}
+//
+//	def existInstantiable() {
+//		return instantiable
+//	}
+//
+//	/**
+//	 * HLVL-E
+//	 * Method that defines if a model specifies the HLVL-EXTENDED dialect, that is:
+//	 * 1. Uses inheritance
+//	 * @param model: abstract representation of the model
+//	 * @return true if the model specifies one of the previous mecanism, false otherwise
+//	 */
+//	def hasScalabilityMecanism(Model model) {
+//
+//		var isHlvlExtended = false
+//		if (model.extendedModels.nullOrEmpty) {
+//			isHlvlExtended = true
+//		}
+//		return isHlvlExtended
+//	}
 }
-	

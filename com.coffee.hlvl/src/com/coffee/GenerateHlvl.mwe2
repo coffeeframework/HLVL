@@ -7,7 +7,7 @@ import org.eclipse.xtext.generator.Generator
 var rootPath = ".."
 
 Workflow {
-	
+
 	component = XtextGenerator {
 		configuration = {
 			project = StandardProjectConfig {
@@ -33,18 +33,21 @@ Workflow {
 		language = StandardLanguage {
 			name = "com.coffee.Hlvl"
 			fileExtensions = "hlvl"
-
 			serializer = {
 				generateStub = false
 			}
 			validator = {
-				 composedCheck = "org.eclipse.xtext.validation.NamesAreUniqueValidator"
+				composedCheck = "org.eclipse.xtext.validation.NamesAreUniqueValidator"
 			}
 			generator = {
 				generateJavaMain = true
 			}
+			parserGenerator = {
+				debugGrammar = true
+			}
+
 		}
-		
+
 	}
-	
+
 }

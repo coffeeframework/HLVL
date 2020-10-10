@@ -13,186 +13,256 @@ generate hlvl "http://www.coffee.com/Hlvl"
  * Modified on January 2019 to include conditional and quantified implies
  * Modified on April 2019
  * Modified July 2019 to adjust the syntax with the MODEVAR paper syntax
- * Modified on July 15 to refine the constantvalues (eliminated the production Value)
+ * Modified on July 15 to refine the constantvalues (eliminated the production Value)}
+ * INHERITANCE:
+ * 		Modified on August 14th to define 'extends' declaration
+ * 		Modified on August 19th, 22nd to define element's referenciation
+ * 		Modified on August 25th, working inheritance v1
  */
 Model:
-	'model' name=ID 'elements:' elements+=(ElmDeclaration)* 'relations:' relations+=(RelDeclaration)*
-	('operations:' operations=Operations)?;
+	'model' name=ID 
+	('extends' extendedModels = (ListOfModelRef))?// HLVL-E
+	'elements:' elements+=(ElmDeclaration)*  
+	'relations:'relations+=(RelDeclaration)*
+	('operations:' operations = Operations )?
+	;
+	
+ListOfModelRef:
+	{ListOfModelRef} ids+= (ModelRef) (',' + ids+= ModelRef)* //HLVL-E (Como excluir el modelo propio de las referencias?)
+;
 
-	// modified by avillota to comply with the modevar paper syntax	
-ElmDeclaration: //; returns NamedItem:
-	{ElmDeclaration} (att='att')?
+ModelRef:
+	importURI= STRING
+;
+
+// modified by avillota to comply with the modevar paper syntax	
+
+ElmDeclaration://; returns NamedItem:
+	{ElmDeclaration}
+	(att= 'att')?
 	//(inst= 'instantiable' '[' min=INT ',' max=INT ']')?
-	(dataType=('boolean' | 'integer' | 'symbolic')) name=ID declaration=Declaration ('comment:' '{' comment=STRING '}')?;
+	(dataType=('boolean' |'integer'|'symbolic'))
+	name= ID
+	declaration= Declaration 
+	('comment:' '{' comment=STRING '}')?
+;
 
 Declaration:
-	ConstantDecl | VariableDecl;
-
+	ConstantDecl | VariableDecl 
+;
 ConstantDecl:
-	{ConstantDecl} ('is' value=Relational)?;
+	{ConstantDecl}('is' value= Relational)?
+;
 
 VariableDecl:
-	{VariableDecl} ('variants:' variants=OptionsDeclaration);
+	{VariableDecl}('variants:' variants= OptionsDeclaration)
+;
 
-	//Declaration of variants
-OptionsDeclaration:
-	Interval | Enumeration;
 
-	// intervals (only intervals of enumerables)
+//Declaration of variants
+OptionsDeclaration: 
+  Interval | Enumeration 
+;
+
+// intervals (only intervals of enumerables)
 Interval:
-	(start=INT) ('..') (end=INT);
-
-	// enumeration (enumeration of booleans, integers and symbols)
+	(start=INT) ('..') (end=INT)
+	;
+	
+// enumeration (enumeration of booleans, integers and symbols)
 Enumeration:
-	('[') list=ListOfValues (']');
+	('[') list =  ListOfValues  (']')
+;
 
 RelDeclaration: //; returns NamedItem:
-	{RelDeclaration} name=ID ':' exp=Relation;
+	{RelDeclaration}  name=ID ':'  exp= Relation 
+;
 
 Relation:
 	Common | //Hierarchy |
-	Pair | VarList | Order | Decomposition | Group |
+	Pair |VarList|Order | Decomposition| Group|
 	//MultInstantiation|
-	Constraint | Visibility | //QImplies|//|
-	ComplexImplies | ComplexMutex;
+	Constraint |Visibility|//QImplies|//|
+	ComplexImplies|ComplexMutex
+;
 
 Common:
-	{Common} 'common' '(' elements=ListOfIDs ')';
+	{Common}'common' '(' elements=ListOfIDs')'
+;
 
-	//MultInstantiation:
+
+//MultInstantiation:
 //	'instantiable' name=[ElmDeclaration] '['min=Number ',' max=Number ']'
 //;
 
 //FIXME separate the simple implies and mutex
 Pair:
-	operator=('implies' | 'mutex') '(' var1=[ElmDeclaration] ',' var2=[ElmDeclaration] ')';
+	operator=('implies'|'mutex') '(' var1 = [ElmDeclaration | GeneralQualifiedName] ',' var2 = [ElmDeclaration | GeneralQualifiedName]')' // HLVL-E
+;
 
 ComplexImplies:
-	'implies' '(' '(' exp=Relational ')' ',' '[' elements=ListOfIDs ']' ')';
+	'implies''(' '('exp=Relational')' ',' '['elements=MixedListOfIDs']'')' // HLVL-E
+;
 
 ComplexMutex:
-	'mutex' '(' '(' exp=Relational ')' ',' '[' elements=ListOfIDs ']' ')';
+	'mutex' '(' '('exp=Relational')' ',' '['elements=MixedListOfIDs']'')' // HLVL-E
+;
 
-	//FIXME commented to be redefined with a different syntax
+//FIXME commented to be redefined with a different syntax
 //QImplies:
 //	'[' mina=INT ',' maxa=INT ']' var1=[ElmDeclaration] 'implies'  '[' minb=INT ',' maxb=INT']' var2=[ElmDeclaration] 
 //;
+
 VarList:
-	operator=('implies' | 'mutex') '(' var1=[ElmDeclaration] ',' '[' list=ListOfIDs ']' ')';
-	//Hierarchy:
+	operator=('implies'|'mutex') '(' var1= [ElmDeclaration | GeneralQualifiedName] ',' '[' list=MixedListOfIDs ']' ')' // HLVL-E
+;
+//Hierarchy:
 //	Decomposition|Group
 //;
 
 // modified by avillota to comply with the modevar paper syntax
 Decomposition:
 	{Decomposition}
-	'decomposition'
-	'('
-	parent=[ElmDeclaration]
-	',' '[' children=ListOfIDs ']'
-	// ')''<' cardinality=INT'>'
-	',' '[' min=INT ',' max=INT ']'
-	')';
+	'decomposition' 
+	'(' 
+		parent=[ElmDeclaration] 
+		',' '['children=ListOfIDs ']'
+		// ')''<' cardinality=INT'>'
+		','	'[' min= INT ',' max=INT ']'
+	 ')' 
+;
 
-	// modified by avillota to comply with the modevar paper syntax
+// modified by avillota to comply with the modevar paper syntax
 Group:
-	{Group}
-	'group'
-	'('
-	parent=[ElmDeclaration]
-	',' '[' children=ListOfIDs ']'
-	',' '[' min=INT ',' max=Range ']'
-	')';
+	{Group} 
+	'group' 
+	'(' 
+		parent=[ElmDeclaration] 
+		',' '['children=ListOfIDs ']'
+		',' '[' min= INT ',' max=Range ']'
+	 ')' 
+;
 
 Range:
-	{Range} value=Wildcard;
+	 {Range} value = Wildcard 
+;
 
 Wildcard:
-	INT | '*';
+	INT |'*'
+;
 
 Visibility:
-	'visibility' '(' condition=Relational ',' '[' list=MixedList ']' ')';
+	'visibility' '(' condition= Relational ',' '['list= MixedList ']' ')'
+;
 
-	//List:
+
+//List:
 //	ListOfIDs| ListOfRelRefs
 //;
+
 Order:
-	operator='before' | 'after' left=[ElmDeclaration] ',' '[' right+=ListOfIDs ']';
+	operator='before' |'after' left= [ElmDeclaration] ',' '[' right+=ListOfIDs']'
+;
 
 Constraint:
-	'expression' '(' exp=Relational ')';
+	'expression''('exp= Relational ')'
+;
 
-Relational:
-	Iff;
+
+Relational: 
+	Iff
+;
 
 Iff returns Relational:
-	Implies ({Iff.left=current} "<=>" right=Implies)*;
-
+	Implies ({Iff.left = current} "<=>" right=Implies)*
+;
 Implies returns Relational:
-	Or ({Implies.left=current} "=>" right=Or)*;
-
+	Or ({Implies.left = current} "=>" right=Or)*
+;
 Or returns Relational:
-	And ({Or.left=current} "OR" right=And)*;
+	And ({Or.left = current} "OR" right=And)*
+;
 
 And returns Relational:
-	Equality ({And.left=current} "AND" right=Equality)*;
+	Equality ({And.left=current} "AND" right=Equality)*
+;
 
 Equality returns Relational:
-	Comparison ({Equality.left=current} op=("=" | "!=") right=Comparison)*;
+	 Comparison ( {Equality.left=current} op=("="|"!=") right=Comparison)* 
+;
 
-Comparison returns Relational:
-	PlusOrMinus ({Comparison.left=current} op=(">=" | "<=" | ">" | "<") right=PlusOrMinus)*;
+Comparison returns Relational: 
+	PlusOrMinus ( {Comparison.left=current} op=(">="|"<="|">"|"<") right=PlusOrMinus)* 
+;
 
 PlusOrMinus returns Relational:
-	MulOrDiv (({Plus.left=current} '+' | {Minus.left=current} '-') right=MulOrDiv)*;
+	MulOrDiv (
+		({Plus.left=current} '+' | {Minus.left=current} '-') right=MulOrDiv
+	)*
+	;
 
-MulOrDiv returns Relational:
-	Primary ({MulOrDiv.left=current} op=('*' | '/' | 'mod') right=Primary)*;
+MulOrDiv returns Relational: 
+	Primary ( {MulOrDiv.left=current} op=('*'|'/'|'mod') right=Primary)* 
+;
 
-	//FIXME the assign production was commented to solve an inconsistency
+//FIXME the assign production was commented to solve an inconsistency
 Primary returns Relational:
-	'(' Relational ')' |
-	{Negation} "~" expression=Primary |
-	{UnaryFunction} op=('abs' | 'sqrt') expression=Primary |
-	{Instances} 'instances' '(' element=[ElmDeclaration] ',' number=INT ')' |
-	{Entailed} 'entailed' '(' element=[ElmDeclaration] ')' |
-	{BinaryFunction} op=('pow' | 'dist' | 'min' | 'max' | 'if') '(' left=Primary ',' right=Primary ')' |
-	//{Assign} variable= [ElmDeclaration] 'is' value=Relational| //value=Value| changed by avillota
-	Atomic;
+	 '(' Relational ')' | 
+	 {Negation} "~"expression=Primary | 
+	 {UnaryFunction} op=('abs'|'sqrt') expression=Primary | 
+	 {Instances} 'instances' '(' element= [ElmDeclaration] ','number= INT ')'|
+	 {Entailed} 'entailed' '(' element= [ElmDeclaration]')'|
+	 {Selected} 'selected' '(' element= [ElmDeclaration]')'|
+	 {BinaryFunction} op=('pow'|'dist'|'min'|'max'|'if') '('left=Primary ',' right=Primary ')' |
+	 //{Assign} variable= [ElmDeclaration] 'is' value=Relational| //value=Value| changed by avillota
+	 Atomic
+;
 
-Atomic returns Relational:
-	{BoolConstant} value=('true' | 'false') |
-	{VariableRef} variable=[ElmDeclaration] |
-	{AttributeRef} attribute=QualifiedName |
+Atomic returns Relational: 
+	{BoolConstant} value=('true'|'false') | 
+	{VariableRef} variable=[ElmDeclaration]|
+//	{AttributeRef} attribute= [ElmDeclaration | QualifiedName] | // HLVL-E
+	{AttributeRef} attribute= QualifiedName |
 	{SymbolConstant} value=STRING |
-	{IntConstant} value=INT;
+	{IntConstant} value=INT 
+;
 
-	//extender para otros modelos
+//extender para otros modelos
 QualifiedName:
-	element=[ElmDeclaration] '.' att=[ElmDeclaration];
+	element= [ElmDeclaration] '.'  att= [ElmDeclaration]
+;
+
+ //HLVL-E
+GeneralQualifiedName:
+ 	ID ("." ID)* 
+;
 
 Operations:
-	op+=Operation (','+ op+=Operation)*;
+	op+= Operation (',' + op+= Operation)*
+;
 
-Operation:
-	Sample;
+Operation:Sample;
 
 Sample returns Operation:
-	{SingleInstruction} name=OperationName |
-	//	{NumConf} 'numberOfConfigurations'|
-	//	{FindOne} 'findConfiguration'|
-	//	{FindAll} 'findAllConfigurations'|
-	{ValidConf} 'validConfiguration' '(' valuations=ListOfValuation ')';
+	{SingleInstruction} name= OperationName|
+//	{NumConf} 'numberOfConfigurations'|
+//	{FindOne} 'findConfiguration'|
+//	{FindAll} 'findAllConfigurations'|
+	{ValidConf} 'validConfiguration' '(' valuations= ListOfValuation ')'
+	
+;
 
 OperationName:
-	'validModel' | 'numberOfConfigurations' | 'findConfiguration' | 'findAllConfigurations';
-
-	///**
+	'validModel'| 'numberOfConfigurations' |'findConfiguration'|'findAllConfigurations'
+;
+	
+///**
 // * Global constraints
 // */
 //Global:
 //	op=GlobalOp '(' vars=ListOfIDs ')'   ( '[' values= ListOfListValues ']')? 
 //	;
+
 
 
 // syntactic categories
@@ -209,34 +279,49 @@ OperationName:
 //
 //DataType:
 //	 'boolean' |'integer'|'symbolic' ;
+	 
 ListOfValues:
-//FIXME Value for relational
-	values+=Relational (','+ values+=Relational)*
+	//FIXME Value for relational
+	values+= Relational (',' + values+= Relational)*
 	//values+= Value (',' + values+= Value)*
 ;
 
 ListOfIDs:
-	{ListOfIDs} values+=([ElmDeclaration]) (','+ values+=[ElmDeclaration])*;
+	{ListOfIDs} values+= [ElmDeclaration] (',' + values+= [ElmDeclaration])*
+;
+
+
+// HLVL-E: List used to reference elements in the same and extended models
+MixedListOfIDs:
+	{MixedListOfIDs} values+= [ElmDeclaration | GeneralQualifiedName] (',' + values+= [ElmDeclaration | GeneralQualifiedName])*
+;
+
 
 ListOfRelRefs:
-	{ListOfRelRefs} ids+=([RelDeclaration]) (','+ ids+=[RelDeclaration])*;
+	{ListOfRelRefs} ids+= ([RelDeclaration]) (',' + ids+= [RelDeclaration])* 
+;
+
 
 MixedList:
-	{MixedList} ids+=([NamedItem]) (','+ ids+=[NamedItem])*;
+	{MixedList} ids+= ([NamedItem]) (',' + ids+= [NamedItem])*
+;
 
 NamedItem:
-	ElmDeclaration | RelDeclaration;
+	ElmDeclaration | RelDeclaration
+;
 
-	// For configuration
 
+// For configuration
+	
 Valuation:
-//FIXME Value for relational
-	'(' element=[ElmDeclaration] ',' value=Relational ')' //value= Value ')'
+	//FIXME Value for relational
+	'(' element= [ElmDeclaration] ',' value= Relational ')' //value= Value ')'
 ;
 
 ListOfValuation:
-	pairs+=Valuation (','+ pairs+=Valuation)*;
-	//ListOfListValues:
+	pairs+= Valuation (',' + pairs+= Valuation)*
+;
+//ListOfListValues:
 //	'['list+= ListOfValues']' (',' + '[' list+= ListOfValues ']')*
 //;
 //GlobalOp:

@@ -47,12 +47,8 @@ class HLVLGeneratorTest {
 		printErrors(model)
 		
 		Assert.assertTrue(model.eResource.errors.isEmpty)
-		Assert.assertTrue(model.eResource.errors.isEmpty)	
-		
-		var HlvlGenerator gen = new HlvlGenerator
-		gen.findDialect(model)
-		
-		Assert.assertEquals(Dialect.BASIC_BOOL, gen.findDialect(model))
+		Assert.assertTrue(model.eResource.errors.isEmpty)			
+		Assert.assertEquals(Dialect.BASIC_BOOL, Dialect.findDialect(model))
 		
 		val attProgram = 
 		'''
@@ -70,12 +66,8 @@ class HLVLGeneratorTest {
 		printErrors(model)
 		
 		Assert.assertTrue(model.eResource.errors.isEmpty)
-		Assert.assertTrue(model.eResource.errors.isEmpty)	
-		
-		gen = new HlvlGenerator
-		gen.findDialect(model)
-		
-		Assert.assertEquals(Dialect.ATTRIBUTE, gen.findDialect(model))
+		Assert.assertTrue(model.eResource.errors.isEmpty)			
+		Assert.assertEquals(Dialect.ATTRIBUTE, Dialect.findDialect(model))
 		
 		val multProgram = 
 		'''
@@ -93,12 +85,8 @@ class HLVLGeneratorTest {
 		printErrors(model)
 		
 		Assert.assertTrue(model.eResource.errors.isEmpty)
-		Assert.assertTrue(model.eResource.errors.isEmpty)	
-		
-		gen = new HlvlGenerator
-		gen.findDialect(model)
-		
-		Assert.assertEquals(Dialect.MULTIPLICITY, gen.findDialect(model))
+		Assert.assertTrue(model.eResource.errors.isEmpty)		
+		Assert.assertEquals(Dialect.MULTIPLICITY, Dialect.findDialect(model))
 		
 		val attMultProgram = 
 		'''
@@ -117,12 +105,8 @@ class HLVLGeneratorTest {
 		printErrors(model)
 		
 		Assert.assertTrue(model.eResource.errors.isEmpty)
-		Assert.assertTrue(model.eResource.errors.isEmpty)	
-		
-		gen = new HlvlGenerator
-		gen.findDialect(model)
-		
-		Assert.assertEquals(Dialect.MULTIPLICITY, gen.findDialect(model))
+		Assert.assertTrue(model.eResource.errors.isEmpty)		
+		Assert.assertEquals(Dialect.MULTIPLICITY, Dialect.findDialect(model))
 	}
 	
 	@Test
@@ -275,10 +259,7 @@ class HLVLGeneratorTest {
 		Assert.assertTrue(model.eResource.errors.isEmpty)
 		Assert.assertTrue(model.eResource.errors.isEmpty)	
 		
-		//testing the generator
-		val HlvlGenerator gen = new HlvlGenerator
-		
-		val parser= ParserFactory.getParser(gen.findDialect(model), model.name);
+		val parser= ParserFactory.getParser(Dialect.findDialect(model), model.name);
 		
 		val actual= parser.parseModel(model)
 		// Expected code
@@ -532,13 +513,10 @@ class HLVLGeneratorTest {
 		% The solving parameters from the parameters files
 		'''
 		//Obtained code
-	
-		var HlvlGenerator gen = new HlvlGenerator
-		gen.findDialect(model)
 		
-		Assert.assertEquals(Dialect.ATTRIBUTE, gen.findDialect(model))
+		Assert.assertEquals(Dialect.ATTRIBUTE, Dialect.findDialect(model))
 		
-		val parser= ParserFactory.getParser(gen.findDialect(model), model.name);
+		val parser= ParserFactory.getParser(Dialect.findDialect(model), model.name);
 		val actual= parser.parseModel(model)
 		
 		println(actual)
@@ -595,16 +573,12 @@ class HLVLGeneratorTest {
 
 		% The solving parameters from the parameters files
 		'''
-		
-		//Initializing generator
-		var HlvlGenerator gen = new HlvlGenerator
-		gen.findDialect(model)
-		
+				
 		//For testing that the dialect is identified
-		Assert.assertEquals(Dialect.ATTRIBUTE, gen.findDialect(model))
+		Assert.assertEquals(Dialect.ATTRIBUTE, Dialect.findDialect(model))
 		
 		// To test the parser
-		val parser= ParserFactory.getParser(gen.findDialect(model), model.name);
+		val parser= ParserFactory.getParser(Dialect.findDialect(model), model.name);
 		val actual= parser.parseModel(model)
 		
 		println(actual)
@@ -683,16 +657,12 @@ class HLVLGeneratorTest {
 		
 				% The solving parameters from the parameters files
 		'''
-		
-		//Initializing generator
-		var HlvlGenerator gen = new HlvlGenerator
-		gen.findDialect(model)
-		
+				
 		//For testing that the dialect is identified
-		Assert.assertEquals(Dialect.MULTIPLICITY, gen.findDialect(model))
+		Assert.assertEquals(Dialect.MULTIPLICITY, Dialect.findDialect(model))
 		
 		// To test the parser
-		val parser= ParserFactory.getParser(gen.findDialect(model), model.name);
+		val parser= ParserFactory.getParser(Dialect.findDialect(model), model.name);
 		val actual= parser.parseModel(model)
 		
 		println(actual)
