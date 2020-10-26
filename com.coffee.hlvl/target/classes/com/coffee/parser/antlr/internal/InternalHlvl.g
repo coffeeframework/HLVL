@@ -939,9 +939,9 @@ ruleCommon returns [EObject current=null]
 		(
 			(
 				{
-					newCompositeNode(grammarAccess.getCommonAccess().getElementsListOfIDsParserRuleCall_3_0());
+					newCompositeNode(grammarAccess.getCommonAccess().getElementsMixedListOfIDsParserRuleCall_3_0());
 				}
-				lv_elements_3_0=ruleListOfIDs
+				lv_elements_3_0=ruleMixedListOfIDs
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getCommonRule());
@@ -950,7 +950,7 @@ ruleCommon returns [EObject current=null]
 						$current,
 						"elements",
 						lv_elements_3_0,
-						"com.coffee.Hlvl.ListOfIDs");
+						"com.coffee.Hlvl.MixedListOfIDs");
 					afterParserOrEnumRuleCall();
 				}
 			)

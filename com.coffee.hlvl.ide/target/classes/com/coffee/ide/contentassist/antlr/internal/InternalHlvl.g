@@ -9320,9 +9320,9 @@ rule__Common__ElementsAssignment_3
 	}
 :
 	(
-		{ before(grammarAccess.getCommonAccess().getElementsListOfIDsParserRuleCall_3_0()); }
-		ruleListOfIDs
-		{ after(grammarAccess.getCommonAccess().getElementsListOfIDsParserRuleCall_3_0()); }
+		{ before(grammarAccess.getCommonAccess().getElementsMixedListOfIDsParserRuleCall_3_0()); }
+		ruleMixedListOfIDs
+		{ after(grammarAccess.getCommonAccess().getElementsMixedListOfIDsParserRuleCall_3_0()); }
 	)
 ;
 finally {

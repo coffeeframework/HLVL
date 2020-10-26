@@ -140,7 +140,7 @@ ruleRelation:
 ruleCommon:
 	'common'
 	'('
-	ruleListOfIDs
+	ruleMixedListOfIDs
 	')'
 ;
 

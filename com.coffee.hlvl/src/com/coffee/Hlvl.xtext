@@ -87,7 +87,7 @@ Relation:
 ;
 
 Common:
-	{Common}'common' '(' elements=ListOfIDs')'
+	{Common}'common' '(' elements=MixedListOfIDs')'
 ;
 
 
