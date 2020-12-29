@@ -21,36 +21,48 @@ import org.eclipse.xtext.validation.IResourceValidator;
 import org.eclipse.xtext.validation.Issue;
 
 import com.coffee.HlvlStandaloneSetup;
+import com.coffee.generator.boolParser.BasicBoolParser;
 import com.coffee.hlvl.Model;
 import com.google.inject.Injector;
 
 public class HLVLParser {
 
+	private static HLVLParser instance = null;
 	
-	public static void main(String[] args) throws IOException {
-		if (args.length == 0) {
-			
-			System.err.println("Aborting: no path to EMF resource provided!");
-			return;
-		}
-		String test = "		model empty\r\n" + "		elements:\r\n" + "		boolean A\r\n" + "		boolean B\r\n"
-				+ "		relations:\r\n" + "		r1: common(A,B)";
-		HLVLParser.runGenerator(args[0]);
+	private Injector injector;
+	private static ResourceSet resourceSet;
+	private static IResourceValidator validator;
+
+	//resource.load(stream, Collections.EMPTY_MAP);
+	
+	private HLVLParser() {
+		injector = new HlvlStandaloneSetup().createInjectorAndDoEMFRegistration();
+		resourceSet = injector.getInstance(XtextResourceSet.class);
+		resourceSet.getLoadOptions().put(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
+		validator = injector.getInstance(IResourceValidator.class);
+	}	
+	
+	public static HLVLParser getInstance() {
+		if(instance == null)
+			instance = new HLVLParser();
 		
+		return instance;
 	}
 
+
 	public static String runGenerator(String modelContent) throws IOException {
+		
 		Injector injector = new HlvlStandaloneSetup().createInjectorAndDoEMFRegistration();
 
 		final ResourceSet resourceSet = injector.getInstance(XtextResourceSet.class);
 		resourceSet.getLoadOptions().put(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
-
+		
 		final IResourceValidator validator = injector.getInstance(IResourceValidator.class);
-		final Resource resource = resourceSet.createResource(URI.createURI(modelContent.substring(modelContent.indexOf(" "),modelContent.indexOf("\n")).trim() + ".hlvl"));
+		final Resource resource = resourceSet.createResource(URI.createURI("fake.hlvl"));
 		final URIConverter.ReadableInputStream stream = new URIConverter.ReadableInputStream(new StringReader(modelContent),
 				"UTF-8");
 		resource.load(stream, Collections.EMPTY_MAP);
-
+		
 		// Validate the resource
 		List<Issue> list = validator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl);
 		if (!list.isEmpty()) {
@@ -65,15 +77,10 @@ public class HLVLParser {
 		return result;
 	}
 	
-	public static Model generateModel(String modelContent) throws Exception{
-		Injector injector = new HlvlStandaloneSetup().createInjectorAndDoEMFRegistration();
-
-		final ResourceSet resourceSet = injector.getInstance(XtextResourceSet.class);
-		resourceSet.getLoadOptions().put(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
+	public Model generateModel(String modelContent) throws Exception{
 		
-		final IResourceValidator validator = injector.getInstance(IResourceValidator.class);
-		final Resource resource = resourceSet.createResource(URI.createURI(modelContent.substring(modelContent.indexOf(" "),modelContent.indexOf("\n")).trim() + ".hlvl"));
-		final URIConverter.ReadableInputStream stream = new URIConverter.ReadableInputStream(new StringReader(modelContent),
+		Resource resource = resourceSet.createResource(URI.createURI(modelContent.substring(modelContent.indexOf(" "),modelContent.indexOf("\n")).trim() + ".hlvl"));
+		URIConverter.ReadableInputStream stream = new URIConverter.ReadableInputStream(new StringReader(modelContent),
 				"UTF-8");
 		resource.load(stream, Collections.EMPTY_MAP);
 		
@@ -87,4 +94,22 @@ public class HLVLParser {
 
 		return model;
 	}
+	
+	public CharSequence getDIMACS(Model model) {
+		String modelName = model.getName();
+		BasicBoolParser parser = (BasicBoolParser) ParserFactory.getParser(Dialect.BASIC_BOOL, modelName); 
+		parser.parseModel(model);
+		return parser.getCNF();
+	}
+	
+	public static void main(String[] args) throws IOException {
+		if (args.length == 0) {
+			
+			System.err.println("Aborting: no path to EMF resource provided!");
+			return;
+		}
+		
+		HLVLParser.runGenerator(args[0]);
+	}
+	
 }

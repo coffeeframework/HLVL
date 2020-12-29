@@ -11,6 +11,7 @@ import com.coffee.generator.TransformationRules
 import com.coffee.generator.expressionsParser.BooleanExpressionsParser
 import com.coffee.generator.Dialect
 import com.coffee.hlvl.BoolConstant
+import java.util.List
 
 /**
  * class implementing the boolean transformation rules for in Benavides2010
@@ -35,8 +36,9 @@ class BasicBooleanRules extends TransformationRules implements IMiniZincConstant
 	private DIMACSRules dimacs;
 	
 	private BooleanExpressionsParser expressionsParser;
-	private StringBuilder cnfBuilder;
 	
+	private StringBuilder cnfBuilder;
+		
 	new(Dialect dialect){	
 		expressionsParser= new BooleanExpressionsParser();
 		expressionsParser.dialect = dialect
@@ -68,6 +70,7 @@ class BasicBooleanRules extends TransformationRules implements IMiniZincConstant
 	
 	override getCoreSingle(ElmDeclaration element){
 		cnfBuilder.append(dimacs.getCoreSingle(element))
+		
 		'''«CONS_DEF» «element.name» «EQUIV» «TRUE_ATOM» «SEMICOLON»
 		'''
 	}
