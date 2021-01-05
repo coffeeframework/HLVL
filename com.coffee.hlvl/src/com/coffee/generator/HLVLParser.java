@@ -5,6 +5,8 @@ package com.coffee.generator;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,41 +30,40 @@ import com.google.inject.Injector;
 public class HLVLParser {
 
 	private static HLVLParser instance = null;
-	
+
 	private Injector injector;
 	private static ResourceSet resourceSet;
 	private static IResourceValidator validator;
 
-	//resource.load(stream, Collections.EMPTY_MAP);
-	
+	// resource.load(stream, Collections.EMPTY_MAP);
+
 	private HLVLParser() {
 		injector = new HlvlStandaloneSetup().createInjectorAndDoEMFRegistration();
 		resourceSet = injector.getInstance(XtextResourceSet.class);
 		resourceSet.getLoadOptions().put(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
 		validator = injector.getInstance(IResourceValidator.class);
-	}	
-	
+	}
+
 	public static HLVLParser getInstance() {
-		if(instance == null)
+		if (instance == null)
 			instance = new HLVLParser();
-		
+
 		return instance;
 	}
 
-
 	public static String runGenerator(String modelContent) throws IOException {
-		
+
 		Injector injector = new HlvlStandaloneSetup().createInjectorAndDoEMFRegistration();
 
 		final ResourceSet resourceSet = injector.getInstance(XtextResourceSet.class);
 		resourceSet.getLoadOptions().put(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
-		
+
 		final IResourceValidator validator = injector.getInstance(IResourceValidator.class);
 		final Resource resource = resourceSet.createResource(URI.createURI("fake.hlvl"));
-		final URIConverter.ReadableInputStream stream = new URIConverter.ReadableInputStream(new StringReader(modelContent),
-				"UTF-8");
+		final URIConverter.ReadableInputStream stream = new URIConverter.ReadableInputStream(
+				new StringReader(modelContent), "UTF-8");
 		resource.load(stream, Collections.EMPTY_MAP);
-		
+
 		// Validate the resource
 		List<Issue> list = validator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl);
 		if (!list.isEmpty()) {
@@ -76,14 +77,15 @@ public class HLVLParser {
 
 		return result;
 	}
-	
-	public Model generateModel(String modelContent) throws Exception{
-		
-		Resource resource = resourceSet.createResource(URI.createURI(modelContent.substring(modelContent.indexOf(" "),modelContent.indexOf("\n")).trim() + ".hlvl"));
+
+	public static Model generateModel(String modelContent) throws Exception {
+
+		Resource resource = resourceSet.createResource(URI.createURI(
+				modelContent.substring(modelContent.indexOf(" "), modelContent.indexOf("\n")).trim() + ".hlvl"));
 		URIConverter.ReadableInputStream stream = new URIConverter.ReadableInputStream(new StringReader(modelContent),
 				"UTF-8");
 		resource.load(stream, Collections.EMPTY_MAP);
-		
+
 		// Validate the resource
 		List<Issue> list = validator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl);
 		if (!list.isEmpty()) {
@@ -94,22 +96,202 @@ public class HLVLParser {
 
 		return model;
 	}
-	
-	public CharSequence getDIMACS(Model model) {
-		String modelName = model.getName();
-		BasicBoolParser parser = (BasicBoolParser) ParserFactory.getParser(Dialect.BASIC_BOOL, modelName); 
-		parser.parseModel(model);
-		return parser.getCNF();
-	}
-	
+
 	public static void main(String[] args) throws IOException {
-		if (args.length == 0) {
+//		if (args.length == 0) {
+//
+//			System.err.println("Aborting: no path to EMF resource provided!");
+//			return;
+//		}
+//
+//		HLVLParser.runGenerator(args[0]);
+
+		
+		
+		String procesador = "model Procesador\n" + 
+				"  elements:\n" + 
+				"   boolean procesador\n" + 
+				"   boolean frecuencia\n" + 
+				"   boolean ONEGHz\n" + 
+				"   boolean TWOGHz\n" + 
+				"   boolean FOURGHz\n" + 
+				"   boolean nucleos\n" + 
+				"   boolean N2\n" + 
+				"   boolean N3\n" + 
+				"   boolean N4\n" + 
+				"   boolean hilos\n" + 
+				"   boolean H2\n" + 
+				"   boolean H3\n" + 
+				"  relations:\n" + 
+				"   com1: common(procesador)\n" + 
+				"   grp1: group(procesador, [frecuencia, nucleos, hilos],[3,3])\n" + 
+				"   grp2: group(frecuencia, [ONEGHz, TWOGHz, FOURGHz],[1,1])\n" + 
+				"   dec2: group(hilos, [H2, H3],[1,1])\n" + 
+				"   grp3: group(nucleos, [N2, N3, N4],[1,*])";
+		
+		String os = "model SistemaOperativo\n" + 
+				"   elements:\n" + 
+				"   boolean sistemaOperativo\n" + 
+				"   boolean Windows\n" + 
+				"   boolean Linux\n" + 
+				"   boolean MacOS\n" + 
+				"   relations:\n" + 
+				"   com1: common(sistemaOperativo)\n" + 
+				"   grp1: group(sistemaOperativo, [Windows, Linux, MacOS],[1,1])";
+		
+		String pcInheritance = "model PC extends \"SistemaOperativo.hlvl\",\"Procesador.hlvl\"\n" + 
+				"	elements:\n" + 
+				"		boolean pc\n" + 
+				"		boolean tarjetaGrafica\n" + 
+				"		boolean msi\n" + 
+				"		boolean asus\n" + 
+				"		boolean evga\n" + 
+				"	relations:\n" + 
+				"	com1: common(pc)\n" + 
+				"	grp1: group(pc, [tarjetaGrafica], [1, 1])\n" +
+				"	grp2: group(tarjetaGrafica, [msi, asus, evga], [1, 1])";
+		
+		String fameDBA = "model  FameDB\n" + 
+				"elements: \n" + 
+				"	boolean delete\n" + 
+				"	boolean put\n" + 
+				"	boolean get\n" + 
+				"	boolean API\n" + 
+				"	boolean Storage\n" + 
+				"	boolean DebugLogging\n" + 
+				"	boolean InMemory\n" + 
+				"	boolean Dynamic\n" + 
+				"	boolean Static\n" + 
+				"	boolean MemAlloc\n" + 
+				"	boolean Persistent\n" + 
+				"	boolean BufferMgr\n" + 
+				"	boolean NutOS\n" + 
+				"	boolean OS\n" + 
+				"	boolean DB\n" + 
+				"relations:\n" + 
+				"	r0: common(DB)\n" + 
+				"	r1:decomposition(DB,[OS],[1,1])\n" + 
+				"	r2:decomposition(OS,[NutOS],[1,1])\n" + 
+				"	r3:group(BufferMgr,[Persistent, InMemory],[1,1])\n" + 
+				"	r4:decomposition(DB,[BufferMgr],[1,1])\n" + 
+				"	r5:group(MemAlloc,[Static, Dynamic],[1,1])\n" + 
+				"	r6:decomposition(Persistent,[MemAlloc],[1,1])\n" + 
+				"	r7:decomposition(DB,[DebugLogging],[0,1])\n" + 
+				"	r8:decomposition(DB,[Storage],[1,1])\n" + 
+				"	r9:group(API,[get, put, delete],[1,*])\n" + 
+				"	r10:decomposition(Storage,[API],[1,1])";
+		
+		String fameDBB = "model  FameDB\n" + 
+				"elements: \n" + 
+				"	boolean Unindexed\n" + 
+				"	boolean BTree\n" + 
+				"	boolean Index\n" + 
+				"	boolean Storage\n" + 
+				"	boolean DebugLogging\n" + 
+				"	boolean InMemory\n" + 
+				"	boolean LFU\n" + 
+				"	boolean LRU\n" + 
+				"	boolean PageRepl\n" + 
+				"	boolean Persistent\n" + 
+				"	boolean BufferMgr\n" + 
+				"	boolean Win\n" + 
+				"	boolean OS\n" + 
+				"	boolean DB\n" + 
+				"relations:\n" + 
+				"	r0: common(DB)\n" + 
+				"	r1:decomposition(DB,[OS],[1,1])\n" + 
+				"	r2:decomposition(OS,[Win],[1,1])\n" + 
+				"	r3:group(BufferMgr,[Persistent, InMemory],[1,1])\n" + 
+				"	r4:decomposition(DB,[BufferMgr],[1,1])\n" + 
+				"	r5:group(PageRepl,[LRU, LFU],[1,1])\n" + 
+				"	r6:decomposition(Persistent,[PageRepl],[1,1])\n" + 
+				"	r7:decomposition(DB,[DebugLogging],[0,1])\n" + 
+				"	r8:decomposition(DB,[Storage],[1,1])\n" + 
+				"	r9:group(Index,[BTree, Unindexed],[1,1])\n" + 
+				"	r10:decomposition(Storage,[Index],[1,1])";
+		
+		String[] modelUris = {fameDBA, fameDBB};
+		try {
+			HLVLParser parser = HLVLParser.getInstance();
+			Model[] models = parser.generateModels(modelUris);
+			List<List<List<Integer>>> currentDimacs = parser.getDIMACSs(models);
 			
-			System.err.println("Aborting: no path to EMF resource provided!");
-			return;
+			System.out.println(currentDimacs);
+			System.out.println(parser.getElementsFromDIMACS(currentDimacs.get(0)));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
-		HLVLParser.runGenerator(args[0]);
+		
+	}
+
+	/**
+	 * Generates String DIMACS format for a set of models and read them to a data
+	 * structure of Lists. The structure consist of three nested lists: The outside
+	 * list represents each of the DIMACS formats for the given models. The middle
+	 * list represents the set of clauses from a DIMACS format for a specific model.
+	 * The inner list represents the set of variables from a clause for a specific
+	 * DIMACS format
+	 * 
+	 * @param models
+	 * @return
+	 */
+	public static List<List<List<Integer>>> getDIMACSs(Model[] models) {
+
+		BasicBoolParser parser = (BasicBoolParser) ParserFactory.getParser(Dialect.BASIC_BOOL, null);
+
+		List<List<List<Integer>>> dimacs = new ArrayList<>();
+
+		for (Model model : models) {
+			parser.parseModel(model);
+			String currentDimacs = parser.getCNF();
+
+			List<List<Integer>> currentClauses = new ArrayList<>();
+			Arrays.asList(currentDimacs.split("\r\n")).forEach(line -> {
+
+				List<Integer> clause = new ArrayList<>();
+				if (!(line.startsWith("c") || line.startsWith("p"))) {
+
+					Arrays.asList(line.split(" ")).forEach(variable -> {
+						clause.add(new Integer(variable));
+					});
+					currentClauses.add(clause);
+
+				}
+			});
+
+			dimacs.add(currentClauses);
+		}
+		return dimacs;
+	}
+
+	private static List<Integer> getElementsFromDIMACS(List<List<Integer>> dimacs) {
+
+		List<Integer> elements = new ArrayList<>();
+		dimacs.forEach(clause -> {
+			elements.addAll(clause);
+		});
+		return elements.stream().map(variable -> Math.abs(variable)).distinct().collect(Collectors.toList());
 	}
 	
+	/**
+	 * Creates model objects from an array of HLVL variability models represented as
+	 * strings.
+	 * 
+	 * @param modelsUris: array of HLVL variability models represented as strings.
+	 * 
+	 * @return Returns an array of model objects that represents the string models
+	 *         given as input.
+	 * @throws Exception if the content of the any of the models has syntactic
+	 *                   errors.
+	 */
+	public static Model[] generateModels(String[] modelsUris) throws Exception {
+
+		Model[] models = new Model[modelsUris.length];
+		for (int i = 0; i < modelsUris.length; i++) {
+			models[i] = generateModel(modelsUris[i]);
+		}
+		return models;
+	}
 }
