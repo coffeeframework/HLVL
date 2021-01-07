@@ -48,7 +48,10 @@ class BasicBooleanRules extends TransformationRules implements IMiniZincConstant
 	}
 	
 	def String getCNF(){
-		return cnfBuilder.toString();
+		val cnf = cnfBuilder.toString();
+		cnfBuilder = new StringBuilder();
+		dimacs.addNumClauses(dimacs.getNumClauses * -1);
+		return cnf;
 	}
 	override getConstant(ElmDeclaration element) {
 		val value= (element.declaration as ConstantDecl).value

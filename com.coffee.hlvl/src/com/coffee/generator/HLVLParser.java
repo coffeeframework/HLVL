@@ -210,14 +210,30 @@ public class HLVLParser {
 				"	r9:group(Index,[BTree, Unindexed],[1,1])\n" + 
 				"	r10:decomposition(Storage,[Index],[1,1])";
 		
-		String[] modelUris = {fameDBA, fameDBB};
+		String A = "model  A\n" + 
+				"elements: \n" + 
+				"	boolean a\n" + 
+				"	boolean b\n" + 
+				"relations:\n" + 
+				"	r0: common(a)\n" +
+				"   r1: decomposition(a, [b], [1,1])";
+		
+		String B = "model  B\n" + 
+				"elements: \n" + 
+				"	boolean a\n" +
+				"	boolean c\n" +
+				"relations:\n" + 
+				"	r0: common(a)\n" + 
+				"   r1: decomposition(a, [c], [1,1])";
+		
+		String[] modelUris = {A, B};
 		try {
 			HLVLParser parser = HLVLParser.getInstance();
 			Model[] models = parser.generateModels(modelUris);
 			List<List<List<Integer>>> currentDimacs = parser.getDIMACSs(models);
 			
-			System.out.println(currentDimacs);
-			System.out.println(parser.getElementsFromDIMACS(currentDimacs.get(0)));
+			System.out.println(DIMACS.toString(currentDimacs.get(0)));
+			System.out.println(DIMACS.toString(currentDimacs.get(1)));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -266,7 +282,7 @@ public class HLVLParser {
 		return dimacs;
 	}
 
-	private static List<Integer> getElementsFromDIMACS(List<List<Integer>> dimacs) {
+	public static List<Integer> getElementsFromDIMACS(List<List<Integer>> dimacs) {
 
 		List<Integer> elements = new ArrayList<>();
 		dimacs.forEach(clause -> {
