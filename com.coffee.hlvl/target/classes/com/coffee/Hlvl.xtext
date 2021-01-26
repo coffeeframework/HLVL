@@ -14,7 +14,7 @@ generate hlvl "http://www.coffee.com/Hlvl"
  * Modified on April 2019
  * Modified July 2019 to adjust the syntax with the MODEVAR paper syntax
  * Modified on July 15 to refine the constantvalues (eliminated the production Value)}
- * INHERITANCE:
+ * INHERITANCE (ID: HLVL-E):
  * 		Modified on August 14th to define 'extends' declaration
  * 		Modified on August 19th, 22nd to define element's referenciation
  * 		Modified on August 25th, working inheritance v1
@@ -232,7 +232,7 @@ QualifiedName:
 	element= [ElmDeclaration] '.'  att= [ElmDeclaration]
 ;
 
- //HLVL-E
+//HLVL-E
 GeneralQualifiedName:
  	ID ("." ID)* 
 ;
